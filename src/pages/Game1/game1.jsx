@@ -1,35 +1,11 @@
-import { useEffect, useReducer, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import "./game1.css";
-import Button from "../../Utils/Button/Button";
+import Button from "../../components/Button/Button";
+import useGameReducer from "./Game1Reducer/Game1Reducer";
 
-
-const initialState = {
-    characters: [],
-    characterSelected: null,
-    randomNames: [],
-    levels: 1,
-    points: 0
-};
-
-const gameReducer = (state, action) => {
-    switch (action.type) {
-        case 'SET_CHARACTERS':
-            return { ...state, characters: action.payload };
-        case 'SET_CHARACTER_SELECTED':
-            return { ...state, characterSelected: action.payload };
-        case 'SET_RANDOM_NAMES':
-            return { ...state, randomNames: action.payload };
-        case 'INCREMENT_LEVEL':
-            return { ...state, levels: state.levels + 1 };
-        case 'INCREMENT_POINTS':
-            return { ...state, points: state.points + 1 };
-        default:
-            return state;
-    }
-};
 
 const Game1 = () => {
-    const [state, dispatch] = useReducer(gameReducer, initialState);
+    const [state, dispatch] = useGameReducer();
 
     const checkAnswer = useCallback((name) => {
         if (name === state.characterSelected.name) {
@@ -56,12 +32,24 @@ const Game1 = () => {
     }, []);
 
     useEffect(() => {
-        fetch(`https://rickandmortyapi.com/api/character/`)
-            .then((res) => res.json())
-            .then((res) => {
-                dispatch({ type: 'SET_CHARACTERS', payload: res.results });
-                nextLevel(res.results);
-            });
+        const fetchAllCharacters = async () => {
+            let allCharacters = [];
+            let page = 1;
+            let hasMorePages = true;
+
+            while (hasMorePages) {
+                const res = await fetch(`https://rickandmortyapi.com/api/character/?page=${page}`);
+                const data = await res.json();
+                allCharacters = [...allCharacters, ...data.results];
+                hasMorePages = data.info.next !== null;
+                page++;
+            }
+
+            dispatch({ type: 'SET_CHARACTERS', payload: allCharacters });
+            nextLevel(allCharacters);
+        };
+
+        fetchAllCharacters();
     }, [nextLevel]);
 
     return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./characters.css";
-import Button from "../../Utils/Button/Button";
+import Button from "../../components/Button/Button";
 
 const Characters = () => {
     const [characters, setCharacters] = useState([]);

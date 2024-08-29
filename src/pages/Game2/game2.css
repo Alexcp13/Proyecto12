@@ -38,3 +38,15 @@
     font-weight: bold;
     color: red;
 }
+
+@media (max-width: 800px) {
+    .rotateGame {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .rotateGame img {
+        width: 100%;
+        max-width: 300px;
+    }
+}

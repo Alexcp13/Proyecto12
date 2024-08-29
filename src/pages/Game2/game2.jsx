@@ -1,73 +1,32 @@
-import React, { useState, useEffect } from "react";
+
 import "./game2.css";
-import Button from "../../Utils/Button/Button";
+import Button from "../../components/Button/Button";
+import customHookGame2 from "./CustomHookGame2/CustomHookGame2";
+
 
 const Game2 = () => {
-    const [characters, setCharacters] = useState([]);
-    const [angles, setAngles] = useState([165, 90, 135]);
-    const [gameOver, setGameOver] = useState(false);
-    const [gameStarted, setGameStarted] = useState(false);
-    const [hasWon, setHasWon] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(8);
+    const {
+        characters,
+        angles,
+        gameOver,
+        gameStarted,
+        hasWon,
+        timeLeft,
+        rotateImage,
+        startGame,
+        resetGame
+    } = customHookGame2();
 
-    useEffect(() => {
-        fetch(`https://rickandmortyapi.com/api/character/`)
-            .then((res) => res.json())
-            .then((res) => {
-                const randomCharacters = [];
-                while (randomCharacters.length < 3) {
-                    const randomCharacter = res.results[Math.floor(Math.random() * res.results.length)];
-                    if (!randomCharacters.includes(randomCharacter)) {
-                        randomCharacters.push(randomCharacter);
-                    }
-                }
-                setCharacters(randomCharacters);
-            });
-    }, []);
-
-    useEffect(() => {
-        if (gameStarted && timeLeft > 0 && !gameOver) {
-            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-            return () => clearTimeout(timer);
-        } else if (timeLeft === 0) {
-            handleTimeUp();
-        }
-    }, [timeLeft, gameStarted, gameOver]);
-
-    const rotateImage = (index) => {
-        if (!gameStarted || gameOver) return;
-        const newAngles = angles.map((angle, i) =>
-            i === index && angle !== 0 ? (angle + 15) % 360 : angle
-        );
-        setAngles(newAngles);
-        checkWin(newAngles);
-    };
-
-    const checkWin = (newAngles) => {
-        if (newAngles.every(angle => angle === 0)) {
-            setHasWon(true);
-            setGameOver(true);
+    const centerImage = (index) => {
+        const imageElement = document.querySelectorAll('.rotateGame img')[index];
+        if (imageElement) {
+            imageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     };
 
-    const handleTimeUp = () => {
-        setGameOver(true);
-    };
-
-    const startGame = () => {
-        setGameStarted(true);
-        setGameOver(false);
-        setHasWon(false);
-        setAngles([165, 90, 135]);
-        setTimeLeft(8);
-    };
-
-    const resetGame = () => {
-        setGameStarted(false);
-        setGameOver(false);
-        setHasWon(false);
-        setAngles([165, 90, 135]);
-        setTimeLeft(8);
+    const handleRotateImage = (index) => {
+        rotateImage(index);
+        centerImage(index);
     };
 
     return (
@@ -82,7 +41,7 @@ const Game2 = () => {
                             transform: `rotate(${angles[index]}deg)`,
                             border: angles[index] === 0 ? '2px solid yellow' : '3px solid black'
                         }}
-                        onClick={() => rotateImage(index)}
+                        onClick={() => handleRotateImage(index)}
                     />
                 ))}
             </div>
