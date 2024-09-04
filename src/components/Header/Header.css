@@ -3,6 +3,8 @@ header {
     padding: 20px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+
 }
 
 nav ul {
@@ -24,6 +26,7 @@ nav ul li a {
     font-weight: bold;
     position: relative;
     transition: color 0.3s ease;
+
 }
 
 nav ul li a::before {
@@ -46,5 +49,68 @@ nav ul li a:hover::before {
 
 nav ul li a.active {
     color: #3498db;
+}
 
+.hamburger-icon {
+    width: 5svh;
+    display: none;
+    cursor: pointer;
+
+
+
+
+
+
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: flex-end;
+    z-index: 1000;
+}
+
+.mobile-menu {
+    background: #2c3e50;
+    width: 250px;
+    height: 100%;
+    padding: 20px;
+    box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-menu ul li {
+    margin: 20px 0;
+}
+
+.mobile-menu ul li a {
+    text-decoration: none;
+    color: #ecf0f1;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+@media (max-width: 800px) {
+    header {
+        display: flex;
+        justify-content: right;
+    }
+
+    .desktop-menu {
+        display: none;
+    }
+
+    .hamburger-icon {
+        display: block;
+    }
 }

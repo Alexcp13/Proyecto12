@@ -1,21 +1,18 @@
 
 import "./game2.css";
 import Button from "../../components/Button/Button";
-import customHookGame2 from "./CustomHookGame2/CustomHookGame2";
+
+import useCharacters from "./UseCharacter/UseCharacter";
+import useAngles from "./UseAngles/UseAngles";
+import useGameSetts from "./UseGameSetts/UseGameSetts";
+import useTimer from "./UseTimer/UseTimer";
 
 
 const Game2 = () => {
-    const {
-        characters,
-        angles,
-        gameOver,
-        gameStarted,
-        hasWon,
-        timeLeft,
-        rotateImage,
-        startGame,
-        resetGame
-    } = customHookGame2();
+    const characters = useCharacters();
+    const { angles, rotateImage, resetAngles } = useAngles();
+    const { gameOver, gameStarted, hasWon, startGame, endGame, resetGame } = useGameSetts();
+    const { timeLeft, resetTimer } = useTimer(8, () => endGame(false));
 
     const centerImage = (index) => {
         const imageElement = document.querySelectorAll('.rotateGame img')[index];
@@ -25,8 +22,24 @@ const Game2 = () => {
     };
 
     const handleRotateImage = (index) => {
-        rotateImage(index);
+        if (gameOver) return;
+        const newAngles = rotateImage(index);
         centerImage(index);
+        if (newAngles.every(angle => angle === 0)) {
+            endGame(true);
+        }
+    };
+
+    const handleStartGame = () => {
+        startGame();
+        resetAngles();
+        resetTimer();
+    };
+
+    const handleResetGame = () => {
+        resetGame();
+        resetAngles();
+        resetTimer();
     };
 
     return (
@@ -46,7 +59,7 @@ const Game2 = () => {
                 ))}
             </div>
             {!gameStarted ? (
-                <Button onClick={startGame}>Start Game</Button>
+                <Button onClick={handleStartGame}>Start Game</Button>
             ) : (
                 <>
                     <div className="timer">
@@ -59,7 +72,7 @@ const Game2 = () => {
                     )}
                 </>
             )}
-            <Button onClick={resetGame} disabled={!gameStarted}>Reiniciar</Button>
+            <Button onClick={handleResetGame} disabled={!gameStarted}>Reiniciar</Button>
         </div>
     );
 };
